@@ -63,6 +63,11 @@ private final static int[] CANDIDATE_MOVE_VECTOR_COORDINATES = {8, 16, 7, 9};
     }
 
     @Override
+    public Pawn movePiece(Move move) {
+        return new Pawn(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance());
+    }
+
+    @Override
     public String toString() {
         return PieceType.PAWN.toString();
     }
