@@ -49,9 +49,12 @@ public enum Alliance {
     };
 
     public abstract int getDirection();
+
     public abstract boolean isBlack();
+
     public abstract boolean isWhite();
 
     public abstract Player choosePlayer(WhitePlayer whitePlayer, BlackPlayer blackPlayer);
+
 }
 
