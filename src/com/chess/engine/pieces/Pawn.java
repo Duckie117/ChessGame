@@ -4,6 +4,9 @@ import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
+import com.chess.engine.board.Move.MajorMove;
+import com.chess.engine.board.Move.PawnAttackMove;
+import com.chess.engine.board.Move.PawnJump;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -14,8 +17,17 @@ public class Pawn extends Piece{
 
 private final static int[] CANDIDATE_MOVE_VECTOR_COORDINATES = {8, 16, 7, 9};
 
-    public Pawn(int piecePosition, Alliance pieceAlliance) {
-        super(piecePosition, pieceAlliance, PieceType.PAWN);
+    public Pawn(final int piecePosition,
+                final Alliance pieceAlliance) {
+
+        super(piecePosition, pieceAlliance, PieceType.PAWN, true);
+    }
+
+    public Pawn(final int piecePosition,
+                final Alliance pieceAlliance,
+                final boolean isFirstMove) {
+
+        super(piecePosition, pieceAlliance, PieceType.PAWN, isFirstMove);
     }
 
     @Override
@@ -30,14 +42,15 @@ private final static int[] CANDIDATE_MOVE_VECTOR_COORDINATES = {8, 16, 7, 9};
             }
 
             if (currentCandidateOffset == 8 && !board.getTile(candidateDestinationCoordinate).isTileOccupied()) {
-                legalMoves.add(new Move.MajorMove(board, this, candidateDestinationCoordinate));
+                //TODO more work to do here (deal with promotions)
+                legalMoves.add(new MajorMove(board, this, candidateDestinationCoordinate));
             } else if (currentCandidateOffset == 16 && this.isFirstMove() &&
-                    (BoardUtils.SEVENTH_RANK[this.piecePosition] && this.getPieceAlliance().isBlack()) ||
-                    (BoardUtils.SECOND_RANK[this.piecePosition] && this.pieceAlliance.isWhite())) {
-                final int behindCandidateDestinationCoordinate = this.piecePosition + this.pieceAlliance.getDirection() * 8;
+                    ((BoardUtils.SEVENTH_RANK[this.piecePosition] && this.getPieceAlliance().isBlack()) ||
+                    (BoardUtils.SECOND_RANK[this.piecePosition] && this.getPieceAlliance().isWhite()))) {
+                final int behindCandidateDestinationCoordinate = this.piecePosition + (this.pieceAlliance.getDirection() * 8);
                 if (!board.getTile(behindCandidateDestinationCoordinate).isTileOccupied() &&
                         !board.getTile(candidateDestinationCoordinate).isTileOccupied()) {
-                    legalMoves.add(new Move.MajorMove(board, this, candidateDestinationCoordinate));
+                    legalMoves.add(new PawnJump(board, this, candidateDestinationCoordinate));
                 }
             } else if (currentCandidateOffset == 7 &&
                     !((BoardUtils.EIGHTH_COLUMN[this.piecePosition] && this.pieceAlliance.isWhite()) ||
@@ -45,7 +58,8 @@ private final static int[] CANDIDATE_MOVE_VECTOR_COORDINATES = {8, 16, 7, 9};
                 if (board.getTile(candidateDestinationCoordinate).isTileOccupied()) {
                     final Piece pieceOnCandidate = board.getTile(candidateDestinationCoordinate).getPiece();
                     if (this.pieceAlliance != pieceOnCandidate.getPieceAlliance()) {
-                        legalMoves.add(new Move.MajorMove(board, this, candidateDestinationCoordinate));
+                        //TODO more to do here
+                        legalMoves.add(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate));
                     }
                 }
             } else if (currentCandidateOffset == 9 &&
@@ -54,7 +68,8 @@ private final static int[] CANDIDATE_MOVE_VECTOR_COORDINATES = {8, 16, 7, 9};
                 if (board.getTile(candidateDestinationCoordinate).isTileOccupied()) {
                     final Piece pieceOnCandidate = board.getTile(candidateDestinationCoordinate).getPiece();
                     if (this.pieceAlliance != pieceOnCandidate.getPieceAlliance()) {
-                        legalMoves.add(new Move.MajorMove(board, this, candidateDestinationCoordinate));
+                        //TODO more to do here
+                        legalMoves.add(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate));
                     }
                 }
             }
