@@ -66,6 +66,7 @@ public class Table extends Observable {
         this.takenPiecesPanel = new TakenPiecesPanel();
         this.boardPanel = new BoardPanel();
         this.moveLog = new MoveLog();
+        this.addObserver(new TableGameAIWatcher());
         this.gameSetup = new GameSetup(this.gameFrame, true);
         this.boardDirection = BoardDirection.NORMAL;
         this.highlightLegalMoves = false;
@@ -216,6 +217,8 @@ public class Table extends Observable {
     }
 
     private void moveMadeUpdate(final PlayerType playerType) {
+        setChanged();
+        notifyObservers(playerType);
     }
 
     private static class AIThinkTank extends SwingWorker<Move, String> {
@@ -342,8 +345,7 @@ public class Table extends Observable {
     private class TilePanel extends JPanel {
         private final int tileId;
 
-        TilePanel(final BoardPanel boardPanel,
-                  final int tileId) {
+        public TilePanel(final BoardPanel boardPanel, final int tileId) {
             super(new GridBagLayout());
             this.tileId = tileId;
             setPreferredSize(TILE_PANEL_DIMENSION);
@@ -426,7 +428,8 @@ public class Table extends Observable {
             this.removeAll();
             if (board.getTile(this.tileId).isTileOccupied()) {
                 try {
-                    final String doggydogg = defaultPieceImagePath + board.getTile(this.tileId).getPiece().getPieceAlliance().toString().substring()
+                    final String doggydogg = defaultPieceImagePath + board.getTile(this.tileId).getPiece().getPieceAlliance().toString().substring(0, 1) +
+                            board.getTile(this.tileId).getPiece().toString() + ".gif";
 
                     final BufferedImage image =
                             ImageIO.read(new File(defaultPieceImagePath + board.getTile(this.tileId).getPiece().getPieceAlliance().toString().substring(0, 1) +
