@@ -22,10 +22,13 @@ public class Board {
     private final BlackPlayer blackPlayer;
     private final Player currentPlayer;
 
+    private final Pawn enPassantPawn;
+
     private Board(final Builder builder) {
         this.gameBoard = createGameBoard(builder);
         this.whitePieces = calculateActivePieces(this.gameBoard, Alliance.WHITE);
         this.blackPieces = calculateActivePieces(this.gameBoard, Alliance.BLACK);
+        this.enPassantPawn = builder.enPassantPawn;
 
         final Collection<Move> whiteStandardLegalMoves = calculateLegalMoves(this.whitePieces);
         final Collection<Move> blackStandardLegalMoves = calculateLegalMoves(this.blackPieces);
@@ -46,6 +49,19 @@ public class Board {
             }
         }
         return builder.toString();
+    }
+
+    public Player blackPlayer() {
+        return this.blackPlayer;
+    }
+    public Player whitePlayer() {
+        return this.whitePlayer;
+    }
+    public Player currentPlayer() {
+        return this.currentPlayer;
+    }
+    public Pawn getEnPassantPawn() {
+        return this.enPassantPawn;
     }
 
     public Collection<Piece> getBlackPieces() {
@@ -131,26 +147,16 @@ public class Board {
         return builder.build();
     }
 
-    public Player blackPlayer() {
-        return this.blackPlayer;
-    }
-    public Player whitePlayer() {
-        return this.whitePlayer;
-    }
-    public Player currentPlayer() {
-        return this.currentPlayer;
-    }
-
     public Iterable<Move> getAllLegalMoves() {
         return Iterables.unmodifiableIterable(Iterables.concat(this.whitePlayer.getLegalMoves(), this.blackPlayer.getLegalMoves()));
     }
+
 
     public static class Builder {
 
         Map<Integer, Piece> boardConfig;
         Alliance nextMoveMaker;
         Pawn enPassantPawn;
-        Player currentPlayer;
 
         public Builder() {
             this.boardConfig = new HashMap<>();
@@ -172,10 +178,6 @@ public class Board {
 
         public void setEnPassantPawn(Pawn enPassantPawn) {
             this.enPassantPawn = enPassantPawn;
-        }
-
-        public void setPlayer(Player currentPlayer) {
-            this.currentPlayer = currentPlayer;
         }
     }
 }

@@ -58,8 +58,7 @@ public abstract class Player {
     }
 
     public boolean isInCheck() {
-        return this.board.currentPlayer().getOpponent().getLegalMoves().stream()
-                .anyMatch(move -> move.getDestinationCoordinate() == this.playerKing.getPiecePosition());
+        return this.board.currentPlayer().getOpponent().getLegalMoves().stream().anyMatch(move -> move.getDestinationCoordinate() == this.playerKing.getPiecePosition());
     }
 
     public boolean isInCheckMate() {
